@@ -1,0 +1,63 @@
+\documentclass[10pt]{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,calc,backgrounds,shadows, arrows, snakes, decorations.pathmorphing, decorations.pathreplacing}
+
+\ifxetex
+      \usepackage{fontspec}
+      \defaultfontfeatures{Mapping=tex-text}
+      \setmainfont[Path = fonts/,ItalicFont={gillsansmtpro-bookitalic-opentype.otf}]{gillsansmtpro-book-opentype.otf}
+      \setsansfont[Path = fonts/,ItalicFont={gillsansmtpro-bookitalic-opentype.otf}]{gillsansmtpro-book-opentype.otf}
+      \setmonofont[Path = fonts/]{inconsolata-opentype.otf}
+      \newcommand{\codefont}{\ttfamily}
+\else
+      \usepackage[utf8x]{inputenc}
+      \usepackage[nott]{inconsolata}
+      \newcommand{\codefont}{\fontfamily{fi4}\selectfont}
+\fi
+
+\usepackage{color}
+\usepackage{xcolor}
+
+\definecolor{lsupurple}{RGB}{70,29,124}
+
+\tikzstyle{every picture}+=[remember picture]
+
+\tikzstyle{na} = [baseline=-5px]
+\tikzstyle{queue_item} = [rectangle, minimum height=14px]
+\tikzset{snake it/.style={decorate, decoration=snake}}
+
+\begin{document}
+  \begin{tikzpicture}
+      \tikzstyle{box}=[minimum width = 4em, color = lsupurple, line width = 0.5mm, draw, node distance = 5em, text=black];
+      \tikzstyle{line}=[thick, color = lsupurple, line width=0.5mm];
+
+      \node (global_memory) [fill = gray!25, draw = gray!25, minimum width=31.5em, minimum height=6em, xshift=15.5em, yshift=4.25em, text = gray] {Global Address Space};
+
+      \node (locality_0) [box, minimum height=10em, xshift=2.5em, label={Locality $0$}, yshift=2em] {Memory};
+      \node (locality_1) [box, minimum height=10em, xshift=8.5em, label={Locality $1$}, yshift=2em] {Memory};
+      \node (locality_i) [box, minimum height=10em, xshift=18.5em, label={Locality $i$}, yshift=2em] {Memory};
+      \node (locality_n) [box, minimum height=10em, xshift=28.5em, label={Locality $N-1$}, yshift=2em] {Memory};
+
+      \node (agas) [box, minimum height=1.5em, below of = locality_0, yshift = -1.5em, minimum width = 30em, xshift=13em] {Parcelport};
+      \node (pp) [box, minimum height=1.5em, below of = agas, yshift = 3em, minimum width = 30em] {AGAS};
+
+      \node (tm_0) [box, minimum height=1.5em, below of = locality_0, yshift = -6em, align=center] {CPUs \\ GPUs};
+
+      \node (tm_1) [box, minimum height=1.5em, below of = locality_1, yshift = -6em, align=center] {CPUs \\ GPUs};
+
+      \node (tm_i) [box, minimum height=1.5em, below of = locality_i, yshift = -6em, align=center] {CPUs \\ GPUs};
+
+      \node (tm_n) [box, minimum height=1.5em, below of = locality_n, yshift = -6em, align=center] {CPUs \\ GPUs};
+
+      \path
+      (tm_0.west) edge [line] node {} (tm_0.east)
+      (tm_1.west) edge [line] node {} (tm_1.east)
+      (tm_i.west) edge [line] node {} (tm_i.east)
+      (tm_n.west) edge [line] node {} (tm_n.east);
+
+      \path
+      ($(locality_1.east) + (1.0em, 0.0em)$) edge [line, dashed] node {} ($(locality_i.west) - (1.0em, 0.0em)$)
+      ($(locality_i.east) + (1.0em, 0.0em)$) edge [line, dashed] node {} ($(locality_n.west) - (1.0em, 0.0em)$);
+  \end{tikzpicture}
+\end{document}
