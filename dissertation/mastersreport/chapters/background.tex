@@ -1,0 +1,84 @@
+\label{chap:background}
+\section{Motivation}
+
+\paragraph{}
+In recent years there have been several organizations which amass extremely large datasets. Whether this is browsing data from Amazon, industrial IoT sensor feedback, agricultural data sources, or self-driving car input data, there are some applications for which extremely large amounts of data can be analyzed for a variety of benefits. For certain of these applications, it is necessary to perform operations over the entire dataset at once. Examples of this include training the model for Tesla's self-driving cars, or Amazon or Netflix performing a matrix factorization on transaction or rating data. These examples and more make extensive use of linear algebra operations. Linear algebra libraries have a long history of being tuned to get optimum performance on single machines and in distributed environments using MPI, but the particular use-case of distributed linear algebra in systems like HPX\footnote{HPX is what is known as an Asynchronous Many Task (AMT) runtime}, does not have libraries that are as well-standardized.
+\paragraph{}
+One example which may help us understand the need for a system like Phylanx is Linear Regression\footnote{For those who are unfamiliar with the goals of linear regression, please refer to Appendix I}. In order to get a set of weights for the coefficients in a linear predictor system with one dependent variable you must solve the following linear algebra problem.
+$$A^{T}Ax = A^{T}b+\epsilon$$
+\paragraph{}
+Depending on the application, the amount of data involved in a computation like this could be extremely large. For example, with the average person checking their phone 80 times per day, if 2 of those check-ins included use of Facebook, Facebook could get, conservatively, 100 million tcp requests from the United States every day. If, for example, they wanted to test latency on connections based on location they could easily muster a dataset of one billion network requests. Trying to perform an ordinary least-squares (OLS) regression on a dataset with a billion rows on a single node would take a very long time, but if they could distribute that application, something they could do easily with services like Amazon Web Services (AWS) or Microsoft's Azure, they could get the result back in much less time. Less time spent waiting on models being run translates to higher efficiency for analytics staff, and higher productivity.
+\paragraph{}
+Large linear algebra intensive computations using HPC systems are common in areas like Astrophysics, or meteorology, but less common in the machine-learning community. Most of the code bases which solve these large problems are tailor made for the particular problem using performant languages like C/C++ and Fortran, and often link to CUDA code for GPU acceleration. One of the problems then with extending the availability of HPC to ML researchers is the steep learning curve for developing distributed applications in these lower-level languages. Our goal with Phylanx then, is to provide them with a more familiar, more user-friendly API, which under the hood can take advantage of HPC resources automatically. Rather than create a separate standard, we chose to emulate the NumPy API for our front-end, since NumPy is the most commonly used library in Python, especially for Machine Learning practitioners.
+\section{Matrix Multiplication}
+\paragraph{}
+In the above example of linear regression it is obvious that the matrix multiplication operation is an important part of the computation. Not only is this the case in linear regression, matrix multiplication is a very common element of Machine Learning algorithms in general. As a result of matrix multiplication's great importance for our target audience, we decided to focus our initial efforts for developing distributed functionality on exposing a distributed matrix multiplication operation. However, in order to better serve our goals with optimizing tiling we have implemented two different algorithms. One, what we are calling dot\_d, is extremely flexible when it comes to the tiling, such that it searches for the parts of the tiles in the RHS of the operation which overlap with the relevant dimensions for the local tile of the LHS operand. The other is a modification of Cannon's algorithm, an algorithm for distributed matrix multiplication first developed by Lynn Elliot Cannon in 1969.
+
+\section{Background}
+\paragraph{}
+For the algorithms we implemented, we relied on previous work on distributed data structures in HPX by Wei et al \cite{WeiDistObj}, work on tiling by Huang et al \cite{Spartan}, much work done on the HPX system by Heller et al \cite{Heller2017}, and work on annotations in Phylanx by Hartmut Kaiser.
+\subsection{Distributed Object}
+
+\paragraph{}
+One of the most important precursors for this project was the distributed\_object. This is an abstraction which allowed us to coordinate a single data structure across many different localities, and enable retrieval of non-local elements. For the multiplication algorithms we made use of a specialized version of the distributed\_object, the distributed\_matrix, which allows submatrix fetching on a non-local tile. Figure \ref{Fig_1} shows it in use.
+
+
+\begin{figure}
+	\centering
+	\includegraphics{dist_matrix_lhs}
+	\caption{Phylanx distributed\_matrix example code}
+	\label{Fig_1}
+\end{figure}
+
+
+As you can see, the distributed object exposes a fetch function which allows us to access non-local elements of the data structure in an object oriented way, using C++ Standard Library idioms (futures) similar to how one might access a data member of an ordinary local object. This convenient abstraction allows for distributed software development which is focused on the already difficult nature of structuring SPMD algorithms, instead of the nuts and bolts of remote data access. Another feature of the distributed\_object is that it is "lazy", in the sense that it registers itself with AGAS, and only finds the precise location of a colleague when that colleague's data is needed locally, and requested through the fetch function.
+\paragraph{}
+We were inspired to create Phylanx's distributed\_object by the UPC++ \cite{UPCXX} data structure of the same name. The main difference in its use is that Phylanx's distributed\_object requires a unique basename to be passed at construction in order for each local portion to find its non-local colleagues through HPX's Active Global Address Space (commonly referrred to as AGAS). Figure \ref{Fig_2} is sample code taken from the programmer's guide to UPC++  demonstrating the use of that library's version of a distributed\_object. 
+
+\begin{figure}
+	\centering
+	\includegraphics{dist_object_upcxx_example}
+	\caption{UPC++ dist\_object example code}
+	\label{Fig_2}
+\end{figure}
+
+\subsection{Tiling}
+\paragraph{}
+As mentioned previously, throughout our development of distributed functionality we had as one of our goals the eventual optimization of user-supplied programs with respect to tiling of distributed matrices. By tiling we mean the intentional distributed arrangement of data segments. For example, in the situation where we want to compute the matrix result $$A=B+C$$ on a set of four computational nodes, we could have many different arrangements of that data. Figure \ref{Fig_3} shows how each matrix involved must be intentionally allocated on a particular compute node in order for it to be used in the computation. Figure \ref{Fig_4} shows a non-optimal tiling (for our addition operation) which will require extra network communication (represented by arrows for the fetching) in order to compute the result. For matrix addition with uniform tiling the optimal solution is simple to find, as there is only one, when all corresponding tiles are co-located on one node. In the case of non-uniform tiling however, there is the possibility that even this optimal solution is not trivial to find, if blocks of A and B do not have an exact dimensional correspondence\footnote{This extra difficulty in finding an optimal set of tiling choices while non-uniform tiles are present is one reason why, although dot\_d allows us flexibility in this regard, we may not prefer to make use of it}.
+\paragraph{}
+For matrix addition, tiling decisions can be very easy. But for operations like matrix multiplication, there can be much greater complexity. Complicating factors include choice of algorithm, number of available processors, pre-existing tiling, as well as others. For instance, just in the algorithms we implemented, Cannon's algorithm requires a perfect square number of processors while dot\_d will function with any number of processors.  For situations with 35 available processors then, you may need to choose between the potential communication reduction benefits of tiling your matrices on 25 processors for compliance with Cannon's requirements, or trying to take advantage of all of the available processors with dot\_d. These are the sorts of questions we hoped developing more distributed functionality in Phylanx might help us answer, whether  we learn more in the design process or through the utilization of Phylanx as a testing environment.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=100mm]{matrix_a_is_distributed}
+	\caption{Creating a distributed object}
+	\label{Fig_3}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=100mm]{network_communication_fix_misalignment}
+	\caption{Network communication required to address tiling mismatch}
+	\label{Fig_4}
+\end{figure}
+
+
+\subsection{Annotations}
+The data structure used to keep track of which blocks of each matrix are stored on which computational node is called the "annotation" in Phylanx. This is essentially a list of lists, which is established when the data structure is initially created, for example, when a matrix is loaded from disk and partitioned onto multiple nodes. At construction, the participating localities coordinate using AGAS, submitting their calculated share of the macro-level data structure, so that after every node has chimed in each node receives a copy of the annotations for the macro-level data structure. This means if the data structure, for example a matrix, is used in an algorithm, say multiplication, the node can find from the annotation which node owns the data it needs to progress in the calculation. Figure \ref{Fig_5} is an example of an annotation generated from a matrix of dimension 6x6 distributed across four localities. Again, each node stores a copy of this metadata, making it possible to identify the home node of any element in the macro-level matrix. 
+\paragraph{}
+It's important to note that while annotations are used in concert with the distributed\_matrix, the latter does not exist at all times. The underlying data, allocated locally on each node, persists as long as it is needed using RAII, and the distributed\_matrix behaves similarly. That is, the distributed\_matrix only exists as long as it is needed in the computation. Once the computation needing it is complete, it goes out of scope. Since the distributed object is "lazy", even if a matrix is distributed, and involved in many subsequent operations, each participating locality registers with AGAS only once per construction, and the IDs assigned by AGAS then are fetched as needed each time. Since all of these operations are occurring concurrently, with no object-wide barriers, this ensures that the program preserves its futurized nature (see chapter \ref{chap:cannon} for a discussion of futurization in AMTs). The annotations do still require a barrier on all participating localities at construction, in order for the annotation to be copied and distributed to each participating localities, but after that, the distributed\_matrix requires no further hard barriers unless the algorithm itself necessitates it. The operation of the distributed\_matrix was designed this way largely to avoid altering the most basic, persistent data-types in use in Phylanx, ensuring that they remained simpler shared memory data structures.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=100mm]{four_loc_annotation}
+	\caption{Four node annotation}
+	\label{Fig_5}
+\end{figure}
+
+\subsection{Summary}
+\paragraph{}
+The Phylanx project was started with the goal of producing a high-quality, performant package which would enable a simple pathway for domain scientists to port their programs to a distributed environment. Prerequisites for our work towards this goal have included development of distributed data structures, and representations for, as well as a system for better understanding, tiling. 
+
+
+
+%

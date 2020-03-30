@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<g font-family="monospace" font-size="14px">
+<text x="0" y="14" xml:space="preserve">util<tspan fill="#666666">:</tspan><tspan fill="#666666">:</tspan>distributed_matrix<tspan fill="#666666">&lt;</tspan>T<tspan fill="#666666">&gt;</tspan>&#160;lhs_data(lhs_localities.annotation_.name_,lhs.matrix(),&#160;lhs_localities.locality_.num_localities_,lhs_localities.locality_.locality_id_);</text>
+<text x="0" y="33" xml:space="preserve"></text></g></svg>

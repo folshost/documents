@@ -1,0 +1,212 @@
+\documentclass[12pt,letterpaper]{lsuetd}
+
+%fix margins
+\setlength{\topmargin}{-0.5in}
+\setlength{\textheight}{9.0in}
+\addtolength{\evensidemargin}{-0.50in}
+\addtolength{\oddsidemargin}{-0.50in}
+\addtolength{\textwidth}{1.00in}
+\setlength{\parindent}{1.75em}
+\setlength{\parskip}{0ex}
+%
+% included packages
+\usepackage{amsmath} % for math
+\usepackage{amssymb} % for symbols
+\usepackage{setspace} % for doublespacing and singlespacing
+\usepackage{graphicx} % for including graphics
+\usepackage[hidelinks, bookmarksopen=false,bookmarks=false]{hyperref} % for hyperlinks
+\usepackage{subcaption} % for two figures in 1
+\usepackage{caption} % replace Figure 1: with Figure 1.
+\usepackage{booktabs}% for booktables
+\captionsetup[table]{labelsep=period}
+\captionsetup[figure]{labelsep=period}
+\captionsetup[lstlisting]{labelsep=period}
+\usepackage{titlesec} % alternative section title, add . after the title in sections
+\titlelabel{\thetitle.\quad}
+\usepackage{cite} % for citations
+\usepackage{soul} % for highliting
+\usepackage{upgreek} %for making mu symbol not italic
+\usepackage{tikz} % for figures
+\usetikzlibrary{positioning, shapes} % for shapes
+%
+% select the fonts here
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.95]{inconsolata} % typewriter font
+%\usepackage{gentium} 
+%
+%
+\usepackage{xcolor} % use colors for todo
+\newcommand\todo[1]{\texttt{\textcolor{red}{TODO:#1}}} %for todo
+%
+\usepackage{textcomp} %for copyright symbol
+\usepackage{pdfpages} %for importing external pdfs
+\usepackage{url} % for urls
+\usepackage[hang,flushmargin]{footmisc} %dont indent footnotes
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%remove extra gap in itemize
+\usepackage{enumitem}
+\setitemize{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
+
+\newcommand\blfootnote[1]{%
+	\begingroup
+	\renewcommand\thefootnote{}\footnote{#1}%
+	\addtocounter{footnote}{-1}%
+	\endgroup
+}
+
+\makeatletter
+\renewcommand\Huge{\@setfontsize\Huge{16pt}{18}} %Redefined for use in dissertation title
+\renewcommand\huge{\@setfontsize\huge{14pt}{18}} % Redefined for use in chapter titles
+\renewcommand\Large{\@setfontsize\Large{12pt}{18}} % Redefined for use in section titles
+\renewcommand\large{\@setfontsize\large{12pt}{18}} % Redefined for use in subsection titles
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{document}
+\renewcommand\@pnumwidth{1.55em}
+\renewcommand\@tocrmarg{9.55em}
+\renewcommand*\l@chapter{\@dottedtocline{0}{1.5em}{2.3em}}
+\renewcommand*\l@figure{\@dottedtocline{1}{0em}{3.1em}}
+\let\l@table\l@figure
+%
+\pagenumbering{roman}
+
+% %%%%The front page %%%%%
+%
+\thispagestyle{empty}
+\begin{center}
+{\Huge \bfseries
+\uppercase{Extending Distributed Functionality in Phylanx}
+}
+
+
+\vfill
+\doublespacing
+A Dissertation \\
+\singlespacing
+Submitted to the Graduate Faculty of the \\
+Louisiana State University and \\
+Agricultural and Mechanical College \\
+in partial fulfillment of the \\
+requirements for the degree of \\
+Master of Science \\
+\doublespacing
+in \\
+
+The Department of Computer Science and Engineering \\
+\singlespacing
+\vfill
+
+by \\
+Maxwell Reeser \\
+B.S., Louisiana State University, 2018 \\
+February 2020
+\end{center}
+\pagebreak
+ %%%%End of the front page %%%%%
+%
+%
+%
+%% Add Acknowledgement in the final version
+\chapter*{Acknowledgments}
+\doublespacing
+\vspace{0.55ex}
+\input{chapters/acknowledgement}
+%
+%The code below adds the Acknowledgments section to the Table of Contents.
+\addcontentsline{toc}{chapter}{\hspace{-1.5em} {Acknowledgements}}
+\addtocontents{toc}{\vspace{12pt}}
+\pagebreak
+\singlespacing
+\setcounter{tocdepth}{1}
+\tableofcontents
+\pagebreak
+%%The code below generates the List of Tables and adds it to the Table of Contents.
+\renewcommand\@pnumwidth{1.55em}
+\renewcommand\@tocrmarg{8.55em}
+\addcontentsline{toc}{chapter}{\hspace{-1.5em} {List of Tables}}
+\addtocontents{toc}{\vspace{12pt}}
+\singlespacing
+\listoftables
+\pagebreak
+%%The code below generates the List of Figures and adds it to the Table of Contents.
+\addcontentsline{toc}{chapter}{\hspace{-1.5em} {List of Figures}}
+\addtocontents{toc}{\vspace{12pt}}
+\singlespacing
+\listoffigures
+\pagebreak
+%The code below adds the Abstract and places it within the Table of Contents.
+\renewenvironment{abstract}{{\hspace{-2.2em} \huge \textbf{\abstractname}}}{\pagebreak}
+\addcontentsline{toc}{chapter}{\hspace{-1.5em} {Abstract}}
+\begin{abstract}
+\vspace{0.55ex}
+\doublespacing
+\input{chapters/abstract}
+\end{abstract}
+%%%
+\pagenumbering{arabic}
+\addtocontents{toc}{\vspace{12pt} \hspace{-1.8em} Chapter \vspace{-1em}}
+\singlespacing
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+% \setlength{\parindent}{0pt} %do not indent paragraphs
+% Chapters are added here
+\chapter{Introduction}
+\doublespacing
+\input{chapters/introduction}
+\pagebreak
+\singlespacing
+%%
+%%
+\chapter{Background}
+\doublespacing
+\input{chapters/background}
+\pagebreak
+\singlespacing
+%%
+%
+\chapter{Conclusion}
+\doublespacing
+\input{chapters/conclusion}
+\pagebreak
+\singlespacing
+%%
+%%
+%%To insert additional chapters, copy the previous five lines, using chapterX as the argument of the
+%%\input command for Chapter X, where X=6,7,8,...
+%% Adding appendix
+
+%
+\addtocontents{toc}{\vspace{12pt} \hspace{-1.8em} Appendix \vspace{-1em}}
+%\addtocontents{toc}{\vspace{12pt} \hspace{-1.8em} Appendix \vspace{-1em}}
+\appendix
+\chapter{Supplementary Results}
+\vspace{0.5em}
+\input{appendix/appendix_supplementary}
+\pagebreak
+\chapter{Copyright Information}
+\vspace{0.5em}
+\input{appendix/appendix_copyright}
+\pagebreak
+%%If you need to insert additional appendices, copy the previous four lines, using appendixY as the
+%%argument of the \input commnd for Appendix Y, for Y=C,D,E,...
+%%
+%%
+%
+\addtocontents{toc}{\vspace{12pt}}
+\addcontentsline{toc}{chapter}{\hspace{-1.5em} {References}}
+%
+\bibliographystyle{unsrt}
+\bibliography{references.bib}
+\pagebreak
+%%
+%%%Finally, the vita section is created and included in the Table of Contents.
+\chapter*{Vita}
+\doublespacing
+\vspace{0.2em}
+\addtocontents{toc}{\vspace{12pt}}
+\addcontentsline{toc}{chapter}{\hspace{-1.5em} {Vita}}
+\input{chapters/vita}
+\end{document}

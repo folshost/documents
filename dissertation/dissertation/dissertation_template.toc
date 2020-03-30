@@ -1,0 +1,23 @@
+\contentsline {chapter}{\hspace {-1.5em} {Acknowledgements}}{ii}{chapter*.1}%
+\vspace {12pt}
+\contentsline {chapter}{\hspace {-1.5em} {List of Tables}}{iv}{chapter*.2}%
+\vspace {12pt}
+\contentsline {chapter}{\hspace {-1.5em} {List of Figures}}{v}{chapter*.3}%
+\vspace {12pt}
+\contentsline {chapter}{\hspace {-1.5em} {Abstract}}{vi}{chapter*.4}%
+\vspace {12pt} \hspace {-1.8em} Chapter \vspace {-1em}
+\vskip 12\p@ \relax 
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\vskip 12\p@ \relax 
+\contentsline {chapter}{\numberline {2}Background}{2}{chapter.2}%
+\vskip 12\p@ \relax 
+\contentsline {chapter}{\numberline {3}Conclusion}{3}{chapter.3}%
+\vspace {12pt} \hspace {-1.8em} Appendix \vspace {-1em}
+\vskip 12\p@ \relax 
+\contentsline {chapter}{\numberline {A}Supplementary Results}{4}{appendix.A}%
+\vskip 12\p@ \relax 
+\contentsline {chapter}{\numberline {B}Copyright Information}{5}{appendix.B}%
+\vspace {12pt}
+\contentsline {chapter}{\hspace {-1.5em} {References}}{5}{appendix.B}%
+\vspace {12pt}
+\contentsline {chapter}{\hspace {-1.5em} {Vita}}{7}{appendix*.6}%

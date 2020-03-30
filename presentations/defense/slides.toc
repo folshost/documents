@@ -1,0 +1,3 @@
+\beamer@sectionintoc {1}{Introduction to Phylanx and Background}{4}{0}{1}
+\beamer@sectionintoc {2}{Algorithms}{11}{0}{2}
+\beamer@sectionintoc {3}{Results \& Future Work}{23}{0}{3}

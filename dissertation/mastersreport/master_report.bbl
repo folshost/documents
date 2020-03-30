@@ -1,0 +1,45 @@
+\begin{thebibliography}{1}
+
+\bibitem{Phylanx}
+R.~{Tohid}, B.~{Wagle}, S.~{Shirzad}, P.~{Diehl}, A.~{Serio}, A.~{Kheirkhahan},
+  P.~{Amini}, K.~{Williams}, K.~{Isaacs}, K.~{Huck}, S.~{Brandt}, and
+  H.~{Kaiser}.
+\newblock Asynchronous execution of python code on task-based runtime systems.
+\newblock In {\em 2018 IEEE/ACM 4th International Workshop on Extreme Scale
+  Programming Models and Middleware (ESPM2)}, pages 37--45, Nov 2018.
+
+\bibitem{Heller2017}
+Thomas Heller, Patrick Diehl, Zachary Byerly, John Biddiscombe, and Hartmut
+  Kaiser.
+\newblock {HPX -- An open source C++ Standard Library for Parallelism and
+  Concurrency}.
+\newblock In {\em {Proceedings of OpenSuCo 2017, Denver, Colorado USA, November
+  2017 (OpenSuCo’17)}}, page~5, 2017.
+
+\bibitem{blaze}
+K.~{Iglberger}, G.~{Hager}, J.~{Treibig}, and U.~{Rüde}.
+\newblock High performance smart expression template math libraries.
+\newblock In {\em 2012 International Conference on High Performance Computing
+  Simulation (HPCS)}, pages 367--373, July 2012.
+
+\bibitem{WeiDistObj}
+Weile Wei, Maxwell Reeser, Hartmut Kaiser, Adrian Serio, Avah Banerjee, and Rod
+  Tohid.
+\newblock Distributed object abstraction in hpx, May 2019.
+
+\bibitem{Spartan}
+Chien-Chin Huang, Qi~Chen, Zhaoguo Wang, Russell Power, Jorge Ortiz, Jinyang
+  Li, and Zhen Xiao.
+\newblock Spartan: A distributed array framework with smart tiling.
+\newblock In {\em 2015 {USENIX} Annual Technical Conference ({USENIX} {ATC}
+  15)}, pages 1--15, Santa Clara, CA, July 2015. {USENIX} Association.
+
+\bibitem{UPCXX}
+J.~{Bachan}, S.~B. {Baden}, S.~{Hofmeyr}, M.~{Jacquelin}, A.~{Kamil},
+  D.~{Bonachea}, P.~H. {Hargrove}, and H.~{Ahmed}.
+\newblock Upc++: A high-performance communication framework for asynchronous
+  computation.
+\newblock In {\em 2019 IEEE International Parallel and Distributed Processing
+  Symposium (IPDPS)}, pages 963--973, May 2019.
+
+\end{thebibliography}
